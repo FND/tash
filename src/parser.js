@@ -8,7 +8,19 @@ class Entity {
 		this.id = id;
 	}
 }
-class Project extends Entity {}
+class Project extends Entity {
+	constructor(id, label) {
+		super(id);
+		if(label) {
+			this.label = label;
+		}
+		this.tasks = [];
+	}
+
+	add(task) {
+		this.tasks.push(task);
+	}
+}
 class Context extends Entity {}
 class Metadata {
 	constructor(key, value) {
@@ -22,10 +34,55 @@ let ENTITIES = {
 	"@": Context
 };
 
+export default function parseTaskList(txt, extensions) {
+	txt = normalize(txt).trim();
+	let [projects, ...tasks] = txt.split("\n\n");
+	tasks = tasks.join("\n");
+
+	let prefix = "+";
+	projects = projects.split("\n").reduce((memo, project) => {
+		if(project.indexOf(prefix) !== 0) {
+			throw new Error("invalid entry in preamble");
+		}
+		let id = project.substr(prefix.length); // discard prefix
+
+		let i = id.indexOf(": ");
+		if(i === -1) {
+			memo[id] = new Project(id);
+		} else {
+			let label = id.substr(i + 2);
+			id = id.substr(0, i);
+			memo[id] = new Project(id, label);
+		}
+		return memo;
+	}, {});
+
+	tasks.split("\n").forEach(line => {
+		let task = parseTask(line, extensions);
+		if(!task) {
+			return;
+		}
+
+		task.projects.forEach(id => {
+			let project = projects[id];
+			if(!project) {
+				project = new Project(id);
+				projects[id] = project;
+			}
+			project.add(task);
+		});
+	}, []);
+
+	return projects;
+}
+
 // `extensions` is a mapping of supported metadata keys to corresponding
 // value-transformation functions (e.g. `{ due: value => new Date(value) }`)
 export function parseTask(line, extensions) {
 	line = normalize(line).trim();
+	if(!line) {
+		return null; // XXX: awkward?
+	}
 	if(line.indexOf(EOL) !== -1) {
 		throw new Error("invalid multi-line task");
 	}
