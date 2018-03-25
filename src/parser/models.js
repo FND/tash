@@ -1,3 +1,5 @@
+let VIRTUAL_PROJECT = "<unassociated>";
+
 export class Store {
 	constructor() {
 		this._projects = {};
@@ -25,7 +27,11 @@ export class Store {
 	}
 
 	_addTask(task) {
-		task.projects.forEach(id => {
+		let { projects } = task;
+		if(!projects.length) {
+			projects = [VIRTUAL_PROJECT];
+		}
+		projects.forEach(id => {
 			let project = this._projects[id];
 			if(!project) {
 				project = new Project(id);

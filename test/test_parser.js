@@ -39,9 +39,9 @@ describe("parser", _ => {
 		assertDeep(store._projectOrder,
 				["next", "alpha", "bravo", "charlie", "delta", "<unassociated>"]);
 		assertDeep(Object.keys(projects),
-				["next", "alpha", "bravo", "charlie", "delta"]);
+				["next", "alpha", "bravo", "charlie", "delta", "<unassociated>"]);
 		assertDeep(Object.values(projects).map(p => p.label),
-				["Today", "alpha", "Lipsum", "charlie", "delta"]);
+				["Today", "alpha", "Lipsum", "charlie", "delta", "<unassociated>"]);
 		assertDeep(projects.next.tasks.map(t => t.desc),
 				["lorem ipsum dolor sit amet"]);
 		assertDeep(projects.alpha.tasks.map(t => t.desc),
@@ -50,5 +50,7 @@ describe("parser", _ => {
 				["lorem ipsum dolor sit amet"]);
 		assertSame(projects.charlie.tasks.length, 0);
 		assertDeep(projects.delta.tasks.map(t => t.desc), ["lorem ipsum"]);
+		assertDeep(projects["<unassociated>"].tasks.map(t => t.desc),
+				["dolor sit amet"]);
 	});
 });
