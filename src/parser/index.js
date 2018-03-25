@@ -110,9 +110,8 @@ export function parseTask(line, extensions) {
 		desc: []
 	});
 
-	let desc = task.desc.join(" ").trim();
-	delete task.desc;
-	return new Task(desc, task);
+	task.desc = task.desc.join(" ").trim();
+	return new Task(line, task);
 }
 
 function normalize(txt) {

@@ -1,3 +1,5 @@
+import md5 from "blueimp-md5"; // TODO: use minified version for browsers
+
 let VIRTUAL_PROJECT = "<unassociated>";
 
 export class Store {
@@ -78,8 +80,8 @@ export class Task {
 		};
 	}
 
-	constructor(desc, fields) {
-		fields = Object.assign({}, fields, { desc });
+	constructor(original, fields) {
+		this.id = md5(original);
 		let { slots } = this.constructor;
 		Object.keys(slots).forEach(field => {
 			let value = fields[field];
@@ -91,10 +93,6 @@ export class Task {
 			}
 			this[field] = value;
 		});
-	}
-
-	get id() {
-		return Math.random(); // FIXME: use MD5 hash of original line?
 	}
 }
 

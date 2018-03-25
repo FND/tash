@@ -19,7 +19,9 @@
 		"test:unit": "mocha -r esm test/test_*.js",
 		"lint": "eslint --cache *.js src test && echo ✓"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"blueimp-md5": "^2.10.0"
+	},
 	"devDependencies": {
 		"eslint-config-fnd": "^1.3.0",
 		"esm": "^3.0.6",

@@ -24,6 +24,7 @@ dolor sit amet
 describe("parser", _ => {
 	it("should deserialize individual tasks", () => {
 		let task = parseTask(fixtureTask, extensions);
+		assertSame(task.id, "ec5d65e5345f60c52b5259ee99403ab4");
 		assertSame(task.completed, true);
 		assertSame(task.priority, "A");
 		assertDeep(task.projects, ["next", "alpha", "bravo"]);
