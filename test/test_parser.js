@@ -37,21 +37,19 @@ describe("parser", _ => {
 	it("should index tasks by project", () => {
 		let store = parseTaskList(fixtureTaskList, extensions);
 		let projects = store._projects;
-		assertDeep(store._projectOrder,
+		assertDeep(projects.map(p => p.id),
 				["next", "alpha", "bravo", "charlie", "delta", "<unassociated>"]);
-		assertDeep(Object.keys(projects),
-				["next", "alpha", "bravo", "charlie", "delta", "<unassociated>"]);
-		assertDeep(Object.values(projects).map(p => p.label),
+		assertDeep(projects.map(p => p.label),
 				["Today", "alpha", "Lipsum", "charlie", "delta", "<unassociated>"]);
-		assertDeep(projects.next.tasks.map(t => t.desc),
+		assertDeep(projects.get("next").tasks.map(t => t.desc),
 				["lorem ipsum dolor sit amet"]);
-		assertDeep(projects.alpha.tasks.map(t => t.desc),
+		assertDeep(projects.get("alpha").tasks.map(t => t.desc),
 				["lorem ipsum dolor sit amet"]);
-		assertDeep(projects.bravo.tasks.map(t => t.desc),
+		assertDeep(projects.get("bravo").tasks.map(t => t.desc),
 				["lorem ipsum dolor sit amet"]);
-		assertSame(projects.charlie.tasks.length, 0);
-		assertDeep(projects.delta.tasks.map(t => t.desc), ["lorem ipsum"]);
-		assertDeep(projects["<unassociated>"].tasks.map(t => t.desc),
+		assertSame(projects.get("charlie").tasks.length, 0);
+		assertDeep(projects.get("delta").tasks.map(t => t.desc), ["lorem ipsum"]);
+		assertDeep(projects.get("<unassociated>").tasks.map(t => t.desc),
 				["dolor sit amet"]);
 	});
 });

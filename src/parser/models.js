@@ -1,11 +1,11 @@
+import { OrderedMap, repr, isArray } from "./util";
 import md5 from "blueimp-md5"; // TODO: use minified version for browsers
 
 let VIRTUAL_PROJECT = "<unassociated>";
 
 export class Store {
 	constructor() {
-		this._projects = {};
-		this._projectOrder = []; // XXX: awkward; encapsulate within `_projects` (ordered map)
+		this._projects = new OrderedMap();
 		this._tasks = {};
 	}
 
@@ -21,11 +21,10 @@ export class Store {
 
 	_addProject(project) {
 		let { id } = project;
-		if(this._projects[id]) {
+		if(this._projects.get(id)) {
 			throw new Error(`duplicate project ID: ${repr(id)}`);
 		}
-		this._projects[id] = project;
-		this._projectOrder.push(id);
+		this._projects.set(id, project);
 	}
 
 	_addTask(task) {
@@ -34,7 +33,7 @@ export class Store {
 			projects = [VIRTUAL_PROJECT];
 		}
 		projects.forEach(id => {
-			let project = this._projects[id];
+			let project = this._projects.get(id);
 			if(!project) {
 				project = new Project(id);
 				this._addProject(project);
@@ -94,15 +93,4 @@ export class Task {
 			this[field] = value;
 		});
 	}
-}
-
-function repr(value, jsonify) {
-	if(jsonify) {
-		value = JSON.stringify(value);
-	}
-	return `\`${value}\``;
-}
-
-function isArray(value) {
-	return value && !!value.pop;
 }
