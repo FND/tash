@@ -1,37 +1,13 @@
 // based on todo.txt format <https://github.com/todotxt/todo.txt>, with the
 // addition of a project preamble (for ordering and custom labeling)
 
+import { Project } from "./models";
+
 let EOL = "\n";
 
-class Entity {
-	constructor(id) {
-		this.id = id;
-	}
-}
-class Project extends Entity {
-	constructor(id, label) {
-		super(id);
-		if(label) {
-			this.label = label;
-		}
-		this.tasks = [];
-	}
-
-	add(task) {
-		this.tasks.push(task);
-	}
-}
-class Context extends Entity {}
-class Metadata {
-	constructor(key, value) {
-		this.key = key;
-		this.value = value;
-	}
-}
-
-let ENTITIES = {
-	"+": Project,
-	"@": Context
+let PREFIXES = {
+	"+": "project",
+	"@": "context"
 };
 
 export default function parseTaskList(txt, extensions) {
@@ -87,34 +63,29 @@ export function parseTask(line, extensions) {
 		throw new Error("invalid multi-line task");
 	}
 
-	// parse while retaining entities' relative position
-	// FIXME: `order` and token classes are YAGNI!? seems very tricky to retain
-	//        in subsequent processing anyway
 	let task = line.split(" ").reduce((memo, el, i) => {
 		let first = i === 0;
 		if(first && el === "x") {
 			memo.completed = true; // TODO: support for completion date
-			return memo; // position is fixed
+			return memo;
 		}
 
 		if((first || (i === 1 && memo.completed)) && /^\([A-Z]\) */.test(el)) {
 			memo.priority = el.substr(1, 1);
-			return memo; // position is fixed
+			return memo;
 		}
 
-		let prefix = el.substr(0, 1);
-		let entity = ENTITIES[prefix];
-		if(entity) {
+		let prefix = PREFIXES[el.substr(0, 1)];
+		if(prefix) {
 			let id = el.substr(1);
-			switch(entity) {
-			case Project:
+			switch(prefix) {
+			case "project":
 				memo.projects.push(id);
 				break;
-			case Context:
+			case "context":
 				memo.contexts.push(id);
 				break;
 			}
-			memo.order.push(new entity(id)); // eslint-disable-line new-cap
 			return memo;
 		}
 
@@ -131,13 +102,11 @@ export function parseTask(line, extensions) {
 				}
 				meta[key].push(value);
 
-				memo.order.push(new Metadata(key, fn(value)));
 				return memo;
 			}
 		}
 
 		memo.desc.push(el);
-		memo.order.push(el);
 		return memo;
 	}, {
 		completed: false,
@@ -145,8 +114,7 @@ export function parseTask(line, extensions) {
 		projects: [],
 		contexts: [],
 		metadata: {},
-		desc: [],
-		order: []
+		desc: []
 	});
 	task.desc = task.desc.join(" ");
 	return task;
