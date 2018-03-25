@@ -1,7 +1,7 @@
 // based on todo.txt format <https://github.com/todotxt/todo.txt>, with the
 // addition of a project preamble (for ordering and custom labeling)
 
-import { Project } from "./models";
+import { Project, Task } from "./models";
 
 let EOL = "\n";
 
@@ -116,8 +116,10 @@ export function parseTask(line, extensions) {
 		metadata: {},
 		desc: []
 	});
-	task.desc = task.desc.join(" ");
-	return task;
+
+	let desc = task.desc.join(" ").trim();
+	delete task.desc;
+	return new Task(desc, task);
 }
 
 function normalize(txt) {
