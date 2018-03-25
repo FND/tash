@@ -1,7 +1,7 @@
 // based on todo.txt format <https://github.com/todotxt/todo.txt>, with the
 // addition of a project preamble (for ordering and custom labeling)
 
-import { Project, Task } from "./models";
+import { Store, Project, Task } from "./models";
 
 let EOL = "\n";
 
@@ -10,46 +10,39 @@ let PREFIXES = {
 	"@": "context"
 };
 
-export default function parseTaskList(txt, extensions) {
-	txt = normalize(txt).trim();
-	let [projects, ...tasks] = txt.split("\n\n");
-	tasks = tasks.join("\n");
+export default function parseTaskList(lines, extensions) {
+	lines = normalize(lines).trim();
+	let [preamble, ...tasks] = lines.split(EOL + EOL);
+	tasks = tasks.join(EOL);
+
+	let store = new Store();
 
 	let prefix = "+";
-	projects = projects.split("\n").reduce((memo, project) => {
+	preamble.split(EOL).forEach(project => {
 		if(project.indexOf(prefix) !== 0) {
 			throw new Error("invalid entry in preamble");
 		}
 		let id = project.substr(prefix.length); // discard prefix
 
-		let i = id.indexOf(": ");
+		let i = id.indexOf(": "); // label delimiter
 		if(i === -1) {
-			memo[id] = new Project(id);
+			project = new Project(id);
 		} else {
 			let label = id.substr(i + 2);
 			id = id.substr(0, i);
-			memo[id] = new Project(id, label);
+			project = new Project(id, label);
 		}
-		return memo;
-	}, {});
+		store.add(project);
+	});
 
-	tasks.split("\n").forEach(line => {
+	tasks.split(EOL).forEach(line => {
 		let task = parseTask(line, extensions);
-		if(!task) {
-			return;
+		if(task) {
+			store.add(task);
 		}
+	});
 
-		task.projects.forEach(id => {
-			let project = projects[id];
-			if(!project) {
-				project = new Project(id);
-				projects[id] = project;
-			}
-			project.add(task);
-		});
-	}, []);
-
-	return projects;
+	return store;
 }
 
 // `extensions` is a mapping of supported metadata keys to corresponding

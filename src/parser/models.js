@@ -1,14 +1,62 @@
+export class Store {
+	constructor() {
+		this._projects = {};
+		this._projectOrder = []; // XXX: awkward; encapsulate within `_projects` (ordered map)
+		this._tasks = {};
+	}
+
+	add(entity) {
+		if(entity instanceof Task) {
+			this._addTask(entity);
+		} else if(entity instanceof Project) {
+			this._addProject(entity);
+		} else {
+			throw new Error(`invalid store entity: ${repr(entity, true)}`);
+		}
+	}
+
+	_addProject(project) {
+		let { id } = project;
+		if(this._projects[id]) {
+			throw new Error(`duplicate project ID: ${repr(id)}`);
+		}
+		this._projects[id] = project;
+		this._projectOrder.push(id);
+	}
+
+	_addTask(task) {
+		task.projects.forEach(id => {
+			let project = this._projects[id];
+			if(!project) {
+				project = new Project(id);
+				this._addProject(project);
+			}
+			project.add(task);
+		});
+
+		let { id } = task;
+		if(this._tasks[id]) {
+			throw new Error(`duplicate task ID: ${repr(id)}`);
+		}
+		this._tasks[id] = task;
+	}
+}
+
 export class Project {
 	constructor(id, label) {
 		this.id = id;
 		if(label) {
-			this.label = label;
+			this._label = label;
 		}
 		this.tasks = [];
 	}
 
 	add(task) {
 		this.tasks.push(task);
+	}
+
+	get label() {
+		return this._label || this.id;
 	}
 }
 
@@ -37,6 +85,10 @@ export class Task {
 			}
 			this[field] = value;
 		});
+	}
+
+	get id() {
+		return Math.random(); // FIXME: use MD5 hash of original line?
 	}
 }
 
