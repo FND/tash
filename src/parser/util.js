@@ -43,3 +43,11 @@ export function repr(value, jsonify) {
 export function isArray(value) {
 	return value && !!value.pop;
 }
+
+export function isString(value) {
+	return value && !!value.substr;
+}
+
+export function isInteger(value) {
+	return Number.isInteger(value);
+}

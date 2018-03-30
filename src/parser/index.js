@@ -111,7 +111,7 @@ export function parseTask(line, extensions) {
 	});
 
 	task.desc = task.desc.join(" ").trim();
-	return new Task(line, task);
+	return new Task(task);
 }
 
 function normalize(txt) {

@@ -1,12 +1,12 @@
-import { OrderedMap, repr, isArray } from "./util";
-import md5 from "blueimp-md5"; // TODO: use minified version for browsers
+import { OrderedMap, repr, isArray, isString, isInteger } from "./util";
 
 let VIRTUAL_PROJECT = "<unassociated>";
 
 export class Store {
-	constructor() {
+	constructor(latestID = 0) {
 		this._projects = new OrderedMap();
 		this._tasks = {};
+		this._latest = latestID;
 	}
 
 	add(entity) {
@@ -42,10 +42,17 @@ export class Store {
 		});
 
 		let { id } = task;
+		if(!id) {
+			task.id = id = this._generateID();
+		}
 		if(this._tasks[id]) {
 			throw new Error(`duplicate task ID: ${repr(id)}`);
 		}
 		this._tasks[id] = task;
+	}
+
+	_generateID() {
+		return ++this._latest;
 	}
 }
 
@@ -70,7 +77,8 @@ export class Project {
 export class Task {
 	static get slots() {
 		return {
-			desc: value => value && value.substr,
+			id: isInteger,
+			desc: isString,
 			completed: value => value === true || value === false,
 			priority: value => /^[A-Z]$/.test(value),
 			projects: isArray,
@@ -79,18 +87,29 @@ export class Task {
 		};
 	}
 
-	constructor(original, fields) {
-		this.id = md5(original);
-		let { slots } = this.constructor;
-		Object.keys(slots).forEach(field => {
-			let value = fields[field];
-			if(value === null || value === undefined) { // all fields are nullable
-				value = null;
-			} else if(!slots[field](value)) { // validate
-				throw new Error("invalid value for task field " +
-						`${repr(field)}: ${repr(value, true)}`);
-			}
-			this[field] = value;
+	constructor(fields) {
+		Object.keys(this.constructor.slots).forEach(slot => {
+			let value = this.validate(slot, fields[slot]);
+			this[slot] = value;
 		});
+	}
+
+	validate(slot, value) {
+		let { slots } = this.constructor;
+		if(value === null || value === undefined) { // all slots are nullable
+			value = null;
+		} else if(!slots[slot](value)) {
+			throw new Error("invalid value for task slot " +
+					`${repr(slot)}: ${repr(value, true)}`);
+		}
+		return value;
+	}
+
+	set id(value) {
+		this._id = this.validate("id", value);
+	}
+
+	get id() {
+		return this._id;
 	}
 }
