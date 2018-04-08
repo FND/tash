@@ -2,13 +2,9 @@
 // addition of a project preamble (for ordering and custom labeling)
 
 import { Store, Project, Task } from "./models";
-
-let EOL = "\n";
-
-let PREFIXES = {
-	"+": "project",
-	"@": "context"
-};
+import { prefixes, completionMarker, // eslint-disable-next-line indent
+		priorityPattern, metadataSep, headerSep, EOL } from "./tokens";
+import { repr } from "./util";
 
 export default function parseTaskList(lines, extensions) {
 	lines = normalize(lines).trim();
@@ -17,14 +13,14 @@ export default function parseTaskList(lines, extensions) {
 
 	let store = new Store();
 
-	let prefix = "+";
+	let prefix = prefixes.reverse.project;
 	preamble.split(EOL).forEach(project => {
 		if(project.indexOf(prefix) !== 0) {
-			throw new Error("invalid entry in preamble");
+			throw new Error(`invalid entry in preamble: ${repr(project)}`);
 		}
 		let id = project.substr(prefix.length); // discard prefix
 
-		let i = id.indexOf(": "); // label delimiter
+		let i = id.indexOf(headerSep);
 		if(i === -1) {
 			project = new Project(id);
 		} else {
@@ -58,19 +54,19 @@ export function parseTask(line, extensions) {
 
 	let task = line.split(" ").reduce((memo, el, i) => {
 		let first = i === 0;
-		if(first && el === "x") {
+		if(first && el === completionMarker) {
 			memo.completed = true; // TODO: support for completion date
 			return memo;
 		}
 
-		if((first || (i === 1 && memo.completed)) && /^\([A-Z]\) */.test(el)) {
+		if((first || (i === 1 && memo.completed)) && priorityPattern.test(el)) {
 			memo.priority = el.substr(1, 1);
 			return memo;
 		}
 
-		let prefix = PREFIXES[el.substr(0, 1)];
+		let prefix = prefixes[el.substr(0, 1)];
 		if(prefix) {
-			let id = el.substr(1);
+			let id = el.substr(1); // discard prefix
 			switch(prefix) {
 			case "project":
 				memo.projects.push(id);
@@ -82,7 +78,7 @@ export function parseTask(line, extensions) {
 			return memo;
 		}
 
-		let index = extensions ? el.indexOf(":") : -1; // XXX: hacky
+		let index = extensions ? el.indexOf(metadataSep) : -1; // XXX: hacky
 		if(index !== -1) {
 			let key = el.substring(0, index);
 			let fn = extensions[key];
