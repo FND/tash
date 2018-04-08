@@ -1,3 +1,4 @@
+import { encode } from "../base62";
 import { OrderedMap, repr, isArray, isString, isInteger } from "./util";
 
 let VIRTUAL_PROJECT = "<unassociated>";
@@ -103,6 +104,14 @@ export class Task {
 					`${repr(slot)}: ${repr(value, true)}`);
 		}
 		return value;
+	}
+
+	get nid() { // node ID, inspired by Purple Numbers
+		let { id } = this;
+		if(!id) {
+			throw new Error("missing task ID");
+		}
+		return encode(id);
 	}
 
 	set id(value) {
