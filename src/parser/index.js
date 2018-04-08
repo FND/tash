@@ -1,10 +1,12 @@
 // based on todo.txt format <https://github.com/todotxt/todo.txt>, with the
 // addition of a project preamble (for ordering and custom labeling)
 
-import { Store, Project, Task } from "./models";
+import Store from "../models/store";
+import Project from "../models/project";
+import Task from "../models/task";
 import { prefixes, completionMarker, // eslint-disable-next-line indent
 		priorityPattern, metadataSep, headerSep, EOL } from "./tokens";
-import { repr } from "./util";
+import { repr } from "../util";
 
 export default function parseTaskList(lines, extensions) {
 	lines = normalize(lines).trim();

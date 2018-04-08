@@ -1,3 +1,5 @@
+import { repr } from "./index";
+
 export class OrderedMap {
 	constructor() {
 		this._items = {};
@@ -31,23 +33,4 @@ export class OrderedMap {
 	get(id) {
 		return this._items[id];
 	}
-}
-
-export function repr(value, jsonify) {
-	if(jsonify) {
-		value = JSON.stringify(value);
-	}
-	return `\`${value}\``;
-}
-
-export function isArray(value) {
-	return value && !!value.pop;
-}
-
-export function isString(value) {
-	return value && !!value.substr;
-}
-
-export function isInteger(value) {
-	return Number.isInteger(value);
 }
