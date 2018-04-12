@@ -1,4 +1,5 @@
 /* global describe, it */
+import * as fixtures from "./fixtures";
 import parseTaskList, { parseTask } from "../src/parser";
 import assert from "assert";
 
@@ -8,22 +9,10 @@ let assertDeep = assert.deepStrictEqual;
 let extensions = {
 	t: v => Date(v)
 };
-let fixtureTask = "x (A) lorem ipsum +next dolor sit amet +alpha +bravo @foo @bar t:2018-03-18";
-let fixtureTaskList = `
-+next: Today
-+alpha
-+bravo: Lipsum
-+charlie
-
-${fixtureTask}
-lorem ipsum +delta
-
-dolor sit amet
-`;
 
 describe("parser", _ => {
 	it("should deserialize individual tasks", () => {
-		let task = parseTask(fixtureTask, extensions);
+		let task = parseTask(fixtures.task, extensions);
 		assertSame(task.id, null);
 		assertSame(task.completed, true);
 		assertSame(task.priority, "A");
@@ -35,7 +24,7 @@ describe("parser", _ => {
 	});
 
 	it("should index tasks by project", () => {
-		let store = parseTaskList(fixtureTaskList, extensions);
+		let store = parseTaskList(fixtures.taskList, extensions);
 		let projects = store._projects;
 		assertDeep(projects.map(p => p.id),
 				["next", "alpha", "bravo", "charlie", "delta", "<unassociated>"]);
