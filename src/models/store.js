@@ -1,6 +1,7 @@
 import Project from "./project";
 import Task from "./task";
 import { BLANK, EOL } from "../parser/tokens";
+import { encode } from "../base62";
 import { OrderedMap } from "../util/ordered_map";
 import { repr } from "../util";
 
@@ -33,7 +34,10 @@ export default class Store {
 		if(!preamble.length) {
 			preamble = [BLANK];
 		}
-		return preamble.concat("").concat(this._tasks.all).join(EOL) + EOL;
+
+		let id = encode(this._latest);
+		return [id].concat(preamble).concat("").concat(this._tasks.all).
+			join(EOL) + EOL;
 	}
 
 	_addProject(project) {

@@ -26,6 +26,7 @@ describe("parser", _ => {
 	it("should index tasks by project", () => {
 		let store = parseTaskList(fixtures.taskList, extensions);
 		let projects = store._projects;
+		assertSame(store._latest, 54286 + 3);
 		assertDeep(projects.map(p => p.id),
 				["next", "alpha", "bravo", "charlie", "delta", "<unassociated>"]);
 		assertDeep(projects.map(p => p.label),
@@ -40,10 +41,13 @@ describe("parser", _ => {
 		assertDeep(projects.get("delta").tasks.map(t => t.desc), ["lorem ipsum"]);
 		assertDeep(projects.get("<unassociated>").tasks.map(t => t.desc),
 				["dolor sit amet"]);
+		assertDeep(projects.get("next").tasks.map(t => t.nid), ["E7b"]);
+		assertDeep(projects.get("delta").tasks.map(t => t.nid), ["E7c"]);
+		assertDeep(projects.get("<unassociated>").tasks.map(t => t.nid), ["E7d"]);
 	});
 
 	it("should support blank preamble", () => {
-		let store = parseTaskList(`----\n\n${fixtures.task}\n`, extensions);
+		let store = parseTaskList(`1\n----\n\n${fixtures.task}\n`, extensions);
 		let projects = store._projects;
 		assertDeep(projects.map(p => p.id),
 				["next", "alpha", "bravo"]);

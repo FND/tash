@@ -6,6 +6,7 @@ import Project from "../models/project";
 import Task from "../models/task";
 import { prefixes, completionMarker, // eslint-disable-next-line indent
 		priorityPattern, metadataSep, headerSep, BLANK, EOL } from "./tokens";
+import { decode } from "../base62";
 import { repr } from "../util";
 
 export default function parseTaskList(lines, extensions) {
@@ -13,10 +14,12 @@ export default function parseTaskList(lines, extensions) {
 	let [preamble, ...tasks] = lines.split(EOL + EOL);
 	tasks = tasks.join(EOL);
 
-	let store = new Store();
+	preamble = preamble.split(EOL);
+	let latest = decode(preamble.shift());
+	let store = new Store(latest);
 
 	let prefix = prefixes.reverse.project;
-	preamble.split(EOL).forEach(project => {
+	preamble.forEach(project => {
 		if(project.indexOf(prefix) !== 0) {
 			if(project === BLANK) {
 				return;
