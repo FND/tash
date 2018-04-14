@@ -21,18 +21,19 @@ describe("store", _ => {
 		let store = new Store();
 		store.add(new Project("next", null));
 		store.add(new Project("<unassociated>", "misc."));
-		store.add(new Task(task));
 
 		// manually adjust task count
-		assertSame(store._latest, 1);
+		assertSame(store._latest, 0);
 		store._latest = 54286;
 
+		store.add(new Task(task));
+
 		let expected = `
-E7a
+E7b
 +next
 +<unassociated>: misc.
 
-${txt}
+${txt} id:E7b
 		`.trim();
 		assertSame(store.toString(), expected + "\n");
 	});
@@ -41,6 +42,12 @@ ${txt}
 		let store = new Store();
 		store.add(new Task(task));
 
-		assertSame(store.toString(), `1\n----\n\n${txt}\n`);
+		let expected = `
+1
+----
+
+${txt} id:1
+		`.trim();
+		assertSame(store.toString(), expected + "\n");
 	});
 });

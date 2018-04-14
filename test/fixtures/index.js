@@ -6,5 +6,5 @@ export let taskList = read("multi.txt");
 
 function read(filename) {
 	let filepath = path.resolve(__dirname, filename);
-	return fs.readFileSync(filepath, "utf-8");
+	return fs.readFileSync(filepath, "utf-8").trim();
 }

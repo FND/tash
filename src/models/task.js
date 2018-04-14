@@ -60,6 +60,7 @@ export default class Task {
 				line.push(key + metadataSep + value);
 			});
 		});
+		line.push("id" + metadataSep + this.nid);
 		return line.join(" ");
 	}
 

@@ -21,12 +21,17 @@ describe("parser", _ => {
 		assertDeep(Object.keys(task.metadata), ["t"]);
 		assertDeep(task.metadata.t, ["2018-03-18"]);
 		assertSame(task.desc, "lorem ipsum dolor sit amet");
+
+		task = parseTask(`${fixtures.task} id:C3j`, extensions);
+		assertDeep(task.id, 46359);
+		assertDeep(task.metadata.id, undefined);
+		assertDeep(task.metadata.t, ["2018-03-18"]);
 	});
 
 	it("should index tasks by project", () => {
 		let store = parseTaskList(fixtures.taskList, extensions);
 		let projects = store._projects;
-		assertSame(store._latest, 54286 + 3);
+		assertSame(store._latest, 54286 + 3 - 1); // one task with, two without ID
 		assertDeep(projects.map(p => p.id),
 				["next", "alpha", "bravo", "charlie", "delta", "<unassociated>"]);
 		assertDeep(projects.map(p => p.label),
@@ -42,8 +47,8 @@ describe("parser", _ => {
 		assertDeep(projects.get("<unassociated>").tasks.map(t => t.desc),
 				["dolor sit amet"]);
 		assertDeep(projects.get("next").tasks.map(t => t.nid), ["E7b"]);
-		assertDeep(projects.get("delta").tasks.map(t => t.nid), ["E7c"]);
-		assertDeep(projects.get("<unassociated>").tasks.map(t => t.nid), ["E7d"]);
+		assertDeep(projects.get("delta").tasks.map(t => t.nid), ["E7Z"]);
+		assertDeep(projects.get("<unassociated>").tasks.map(t => t.nid), ["E7c"]);
 	});
 
 	it("should support blank preamble", () => {
