@@ -11,4 +11,5 @@ export let completionMarker = "x";
 export let priorityPattern = /^\([A-Z]\) */;
 export let metadataSep = ":";
 export let headerSep = ": ";
+export let BLANK = "----"; // XXX: insufficiently unambiguous?
 export let EOL = "\n";

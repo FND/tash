@@ -41,4 +41,13 @@ describe("parser", _ => {
 		assertDeep(projects.get("<unassociated>").tasks.map(t => t.desc),
 				["dolor sit amet"]);
 	});
+
+	it("should support blank preamble", () => {
+		let store = parseTaskList(`----\n\n${fixtures.task}\n`, extensions);
+		let projects = store._projects;
+		assertDeep(projects.map(p => p.id),
+				["next", "alpha", "bravo"]);
+		assertDeep(projects.map(p => p.label),
+				["next", "alpha", "bravo"]);
+	});
 });

@@ -5,7 +5,7 @@ import Store from "../models/store";
 import Project from "../models/project";
 import Task from "../models/task";
 import { prefixes, completionMarker, // eslint-disable-next-line indent
-		priorityPattern, metadataSep, headerSep, EOL } from "./tokens";
+		priorityPattern, metadataSep, headerSep, BLANK, EOL } from "./tokens";
 import { repr } from "../util";
 
 export default function parseTaskList(lines, extensions) {
@@ -18,6 +18,9 @@ export default function parseTaskList(lines, extensions) {
 	let prefix = prefixes.reverse.project;
 	preamble.split(EOL).forEach(project => {
 		if(project.indexOf(prefix) !== 0) {
+			if(project === BLANK) {
+				return;
+			}
 			throw new Error(`invalid entry in preamble: ${repr(project)}`);
 		}
 		let id = project.substr(prefix.length); // discard prefix

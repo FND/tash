@@ -6,11 +6,14 @@ export class OrderedMap {
 		this._order = [];
 	}
 
+	reduce(fn, initial) {
+		let items = this._items;
+		return this._order.reduce((memo, id, i) => fn(memo, items[id], i), initial);
+	}
+
 	map(fn) {
 		let items = this._items;
-		return this._order.map((id, i) => {
-			return fn(items[id], i);
-		});
+		return this._order.map((id, i) => fn(items[id], i));
 	}
 
 	forEach(fn) {
@@ -32,5 +35,9 @@ export class OrderedMap {
 
 	get(id) {
 		return this._items[id];
+	}
+
+	get all() {
+		return this.map(item => item);
 	}
 }

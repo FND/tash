@@ -1,3 +1,4 @@
+import { prefixes, metadataSep } from "../parser/tokens";
 import { encode } from "../base62";
 import { repr, isArray, isString, isInteger } from "../util";
 
@@ -15,6 +16,9 @@ export default class Task {
 	}
 
 	constructor(fields) {
+		if(!fields) {
+			throw new Error("missing task fields");
+		}
 		Object.keys(this.constructor.slots).forEach(slot => {
 			let value = this.validate(slot, fields[slot]);
 			this[slot] = value;
@@ -30,6 +34,33 @@ export default class Task {
 					`${repr(slot)}: ${repr(value, true)}`);
 		}
 		return value;
+	}
+
+	toString() {
+		let line = [];
+		let prfx = prefixes.reverse;
+
+		if(this.completed) {
+			line.push("x");
+		}
+		if(this.priority) {
+			line.push(`(${this.priority})`);
+		}
+		line.push(this.desc);
+		this.projects.forEach(p => {
+			line.push(prfx.project + p);
+		});
+		this.contexts.forEach(c => {
+			line.push(prfx.context + c);
+		});
+		let meta = this.metadata;
+		Object.keys(meta).forEach(key => {
+			let values = meta[key];
+			values.forEach(value => {
+				line.push(key + metadataSep + value);
+			});
+		});
+		return line.join(" ");
 	}
 
 	get nid() { // node ID, inspired by Purple Numbers
