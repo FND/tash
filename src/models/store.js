@@ -40,6 +40,14 @@ export default class Store {
 			join(EOL) + EOL;
 	}
 
+	get projects() {
+		return this._projects.all;
+	}
+
+	get tasks() {
+		return this._tasks.all;
+	}
+
 	_addProject(project) {
 		let { id } = project;
 		if(this._projects.get(id)) {

@@ -19,10 +19,13 @@
 		"test:unit": "mocha -r esm test/test_*.js",
 		"lint": "eslint --cache *.js src test && echo ✓"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"lit-html": "^0.9.0"
+	},
 	"devDependencies": {
 		"eslint-config-fnd": "^1.3.0",
-		"esm": "^3.0.16",
-		"mocha": "^5.0.5"
+		"esm": "^3.0.18",
+		"faucet-pipeline-js": "^1.0.0-rc.5",
+		"mocha": "^5.1.0"
 	}
 }
