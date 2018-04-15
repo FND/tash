@@ -1,0 +1,72 @@
+ul.tasks {
+	margin: 0;
+	padding: 1px 0 0; // compensate for collapsed borders
+	list-style-type: none;
+}
+
+ul.tasks > li {
+	overflow: auto; // contain floats
+	margin-top: -1px; // collapse borders
+	border: 1px solid #DDD;
+	padding: 0.5em;
+	background-color: #FFF;
+
+	&:first-child {
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+	}
+	&:last-child {
+		border-bottom-left-radius: 5px;
+		border-bottom-right-radius: 5px;
+	}
+
+	// colors adapted from Bootstrap
+	&[data-priority=A] {
+		background-color: #F2DEDE;
+	}
+	&[data-priority=B] {
+		background-color: #FCF8E3;
+	}
+	&[data-priority=C] {
+		background-color: #D9EDF7;
+	}
+
+	&.completed {
+		background-color: #DFF0D8;
+		opacity: 0.5;
+
+		&:before {
+			content: "✓ ";
+			display: block;
+			float: left;
+			margin-right: 0.5em;
+		}
+	}
+
+	ul.contexts {
+		list-style-type: none;
+
+		li {
+			float: right;
+			margin-left: 0.5em;
+			white-space: nowrap;
+			// adapted from Bootstrap's `.label`
+			border-radius: 0.25em;
+			padding: 0.2em 0.6em;
+			font-size: 75%;
+			font-weight: bold;
+			color: #FFF;
+			background-color: #777;
+		}
+	}
+
+	p {
+		margin: 0;
+	}
+
+	time {
+		&:before {
+			content: "📆 ";
+		}
+	}
+}

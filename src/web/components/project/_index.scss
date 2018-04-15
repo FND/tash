@@ -1,0 +1,16 @@
+.project {
+	width: 32%;
+	float: left;
+	margin: 0 0.5% 1em;
+	border: 1px solid #EEE;
+	border-radius: 5px;
+	padding: 0.5em;
+	background-color: #FCFCFC;
+
+	h2 {
+		margin: 0 0 0.5em;
+	}
+}
+.project:nth-of-type(3n+1) {
+	clear: left;
+}
