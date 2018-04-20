@@ -7,6 +7,7 @@ module.exports = {
 	}],
 	js: [{
 		source: "./src/web/index.js",
-		target: "./dist/bundle.js"
+		target: "./dist/bundle.js",
+		jsx: { pragma: "createElement" }
 	}]
 };

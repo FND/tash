@@ -21,13 +21,13 @@ ul.tasks > li {
 	}
 
 	// colors adapted from Bootstrap
-	&[data-priority=A] {
+	&.priority-a {
 		background-color: #F2DEDE;
 	}
-	&[data-priority=B] {
+	&.priority-b {
 		background-color: #FCF8E3;
 	}
-	&[data-priority=C] {
+	&.priority-c {
 		background-color: #D9EDF7;
 	}
 
