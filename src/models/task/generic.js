@@ -23,6 +23,13 @@ export default class Task {
 		});
 	}
 
+	addProject(project) {
+		let { projects } = this;
+		if(!projects.includes(project)) {
+			projects.push(project);
+		}
+	}
+
 	validate(slot, value) {
 		let { slots } = this.constructor;
 		if(value === null || value === undefined) { // all slots are nullable

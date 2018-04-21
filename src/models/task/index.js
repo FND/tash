@@ -22,6 +22,10 @@ export default class TashTask extends Task {
 		return super.toString() + " id" + metadataSep + this.nid;
 	}
 
+	get next() { // TODO: rename?
+		return this.projects.includes("next");
+	}
+
 	set threshold(value) {
 		this.metadata.t = [value.toISOString().substr(0, 10)];
 	}

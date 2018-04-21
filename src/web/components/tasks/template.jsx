@@ -17,9 +17,11 @@ export default ({ tasks }) => {
 function Task({ task }) {
 	let { priority, contexts, threshold } = task;
 	threshold = threshold && date2str(threshold);
-	let cls = classNames({ completed: task.completed },
+	let cls = classNames("task", { completed: task.completed },
 			priority && `priority-${priority.toLowerCase()}`);
 	return <li class={cls} task={task}>
+		<Controls next={task.next} />
+
 		{contexts &&
 				<Contexts contexts={contexts} />}
 
@@ -28,6 +30,15 @@ function Task({ task }) {
 		{threshold &&
 				<time datetime={threshold}>{threshold}</time>}
 	</li>;
+}
+
+function Controls({ next }) {
+	return <ul class="controls">
+		{!next &&
+				<li>
+					<button type="button">☝️</button>
+				</li>}
+	</ul>;
 }
 
 function Contexts({ contexts }) {

@@ -7,8 +7,15 @@ import { render } from "complate-dom";
 export default class App extends HTMLElement {
 	connectedCallback() {
 		let txt = this.querySelector("pre").textContent;
-		let store = parseTaskList(txt, extensions);
+		this.store = parseTaskList(txt, extensions);
 
-		render(macro, store, this);
+		this.render();
+	}
+
+	render(force) {
+		if(force) { // XXX: crude
+			this.store = parseTaskList(this.store.toString(), extensions);
+		}
+		render(macro, this.store, this);
 	}
 }
