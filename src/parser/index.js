@@ -90,12 +90,7 @@ export function parseTask(line, extensions) {
 		if(index !== -1) {
 			let key = el.substring(0, index);
 			let value = el.substr(index + 1);
-			if(key === "id") { // NB: special-casing
-				memo.id = decode(value);
-				return memo;
-			}
-			let fn = extensions[key];
-			if(fn) {
+			if(extensions.includes(key)) {
 				let meta = memo.metadata;
 				if(!meta[key]) {
 					meta[key] = [];

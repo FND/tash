@@ -1,3 +1,4 @@
+import { date2str } from "../../../util";
 import classNames from "classnames";
 import createElement from "complate-dom";
 
@@ -14,12 +15,8 @@ export default ({ tasks }) => {
 }
 
 function Task({ task }) {
-	let threshold = task.metadata.t;
-	if(threshold) {
-		threshold = threshold[0];
-	}
-
-	let { priority, contexts } = task;
+	let { priority, contexts, threshold } = task;
+	threshold = threshold && date2str(threshold);
 	let cls = classNames({ completed: task.completed },
 			priority && `priority-${priority.toLowerCase()}`);
 	return <li class={cls} task={task}>

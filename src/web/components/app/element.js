@@ -1,9 +1,8 @@
 /* eslint-env browser */
 import macro from "./template";
+import { extensions } from "../../../parser/tash";
 import parseTaskList from "../../../parser";
 import { render } from "complate-dom";
-
-let extensions = { t: v => Date(v) };
 
 export default class App extends HTMLElement {
 	connectedCallback() {

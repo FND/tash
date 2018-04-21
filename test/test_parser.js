@@ -1,14 +1,11 @@
 /* global describe, it */
 import * as fixtures from "./fixtures";
+import { extensions } from "../src/parser/tash";
 import parseTaskList, { parseTask } from "../src/parser";
 import assert from "assert";
 
 let assertSame = assert.strictEqual;
 let assertDeep = assert.deepStrictEqual;
-
-let extensions = {
-	t: v => Date(v)
-};
 
 describe("parser", _ => {
 	it("should deserialize individual tasks", () => {
@@ -23,8 +20,8 @@ describe("parser", _ => {
 		assertSame(task.desc, "lorem ipsum dolor sit amet");
 
 		task = parseTask(`${fixtures.task} id:C3j`, extensions);
-		assertDeep(task.id, 46359);
-		assertDeep(task.metadata.id, undefined);
+		assertSame(task.id, 46359);
+		assertDeep(task.metadata.id, ["C3j"]);
 		assertDeep(task.metadata.t, ["2018-03-18"]);
 	});
 

@@ -1,11 +1,9 @@
-import { prefixes, metadataSep } from "../parser/tokens";
-import { encode } from "../base62";
-import { repr, isArray, isString, isInteger } from "../util";
+import { prefixes, metadataSep } from "../../parser/tokens";
+import { repr, isArray, isString } from "../../util";
 
 export default class Task {
 	static get slots() {
 		return {
-			id: isInteger,
 			desc: isString,
 			completed: value => value === true || value === false,
 			priority: value => /^[A-Z]$/.test(value),
@@ -60,23 +58,6 @@ export default class Task {
 				line.push(key + metadataSep + value);
 			});
 		});
-		line.push("id" + metadataSep + this.nid);
 		return line.join(" ");
-	}
-
-	get nid() { // node ID, inspired by Purple Numbers
-		let { id } = this;
-		if(!id) {
-			throw new Error("missing task ID");
-		}
-		return encode(id);
-	}
-
-	set id(value) {
-		this._id = this.validate("id", value);
-	}
-
-	get id() {
-		return this._id;
 	}
 }
